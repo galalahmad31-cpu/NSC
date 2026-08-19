@@ -1,79 +1,328 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة تسجيل دخول المشتركين</title>
-    
-    <!-- استدعاء ملف الأسماء المحمي من السيرفر -->
+    <title>Nutrition Support Calculator - Dr. Ahmed Galal</title>
+
+    <!-- Subscriber database -->
     <script src="/protected/users.js"></script>
 
     <style>
+        * { box-sizing: border-box; }
+
         body {
+            margin: 0;
+            min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0; padding: 0;
-            display: flex; align-items: center; justify-content: center; min-height: 100vh;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1e293b;
         }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 560px;
+        }
+
         .login-card {
-            background: white; padding: 30px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
-            max-width: 400px; width: 90%;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16);
+            border: 1px solid #e2e8f0;
         }
-        h1 { color: #2ec4b6; margin-bottom: 20px; font-size: 24px; }
+
+        .header {
+            background: #1e3a8a;
+            color: white;
+            padding: 34px 25px 30px;
+            text-align: center;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .developer-row {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+
+        .developer {
+            color: #bfdbfe;
+            font-size: 17px;
+        }
+
+        .linkedin {
+            width: 26px;
+            height: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .linkedin:hover {
+            color: #93c5fd;
+            transform: translateY(-1px);
+        }
+
+        .linkedin svg {
+            width: 21px;
+            height: 21px;
+            fill: currentColor;
+        }
+
+        .role {
+            margin-top: 5px;
+            color: #93c5fd;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .body {
+            padding: 32px 30px 30px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 7px;
+            color: #1e3a8a;
+            font-size: 22px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+        }
+
         input {
-            width: 100%; padding: 12px; margin: 10px 0;
-            border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
-            font-size: 16px; text-align: center;
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: #fff;
+            font-size: 16px;
+            text-align: left;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
         .login-btn {
-            width: 100%; background-color: #2ec4b6; color: white;
-            padding: 12px; border: none; border-radius: 8px;
-            font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px;
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 7px;
+            transition: 0.2s;
         }
-        .login-btn:hover { background-color: #011627; }
+
+        .login-btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-1px);
+        }
+
+        .message {
+            min-height: 22px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 0 30px 25px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media (max-width: 520px) {
+            .title { font-size: 24px; }
+            .header { padding: 28px 18px 24px; }
+            .body { padding: 26px 20px 24px; }
+        }
     </style>
 </head>
+
 <body>
 
+<div class="login-wrapper">
     <div class="login-card">
-        <h1>موقع حسابات التغذية 🍎</h1>
-        <p style="color: #666; font-size: 14px;">برجاء إدخال بيانات اشتراكك للدخول إلى الحاسبة</p>
-        
-        <input type="text" id="username" placeholder="اسم المستخدم (Username)">
-        <input type="password" id="password" placeholder="الرقم السري (Password)">
-        
-        <button class="login-btn" onclick="validateLogin()">تسجيل الدخول</button>
+
+        <div class="header">
+            <h1 class="title">Nutrition Support Calculator</h1>
+
+            <div class="developer-row">
+                <span class="developer">Developed by Dr. Ahmed Galal</span>
+
+                <a
+                    href="https://www.linkedin.com/in/ahmad-galal-a1200714b"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="linkedin"
+                    aria-label="LinkedIn"
+                >
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="role">Nutrition Support Pharmacist</div>
+        </div>
+
+        <div class="body">
+            <div class="welcome">
+                <h2>Subscriber Login</h2>
+                <p>Enter your username and password to access the calculator.</p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); validateLogin();">
+
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        autocomplete="username"
+                        placeholder="Enter username"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        autocomplete="current-password"
+                        placeholder="Enter password"
+                        required
+                    >
+                </div>
+
+                <button class="login-btn" type="submit">
+                    LOGIN
+                </button>
+
+            </form>
+
+            <div id="message" class="message" aria-live="polite"></div>
+        </div>
+
+        <div class="footer">
+            Authorized subscribers only
+        </div>
+
     </div>
+</div>
 
-    <script>
-        function validateLogin() {
-            let user = document.getElementById("username").value.trim();
-            let pass = document.getElementById("password").value.trim();
+<script>
+    function validateLogin() {
 
-            if (!window.USERS_DATABASE) {
-                alert("خطأ في الاتصال بالسيرفر!");
+        const user =
+            document.getElementById("username").value.trim();
+
+        const pass =
+            document.getElementById("password").value;
+
+        const message =
+            document.getElementById("message");
+
+        if (!window.USERS_DATABASE) {
+            message.style.color = "#dc2626";
+            message.textContent =
+                "Unable to connect to the subscriber database.";
+            return;
+        }
+
+        const userRecord =
+            window.USERS_DATABASE[user];
+
+        if (userRecord && userRecord.password === pass) {
+
+            const today = new Date();
+            const expire = new Date(userRecord.expireDate);
+
+            if (
+                !userRecord.expireDate ||
+                Number.isNaN(expire.getTime())
+            ) {
+                message.style.color = "#dc2626";
+                message.textContent =
+                    "Subscription information is unavailable.";
                 return;
             }
 
-            let userRecord = window.USERS_DATABASE[user];
-
-            if (userRecord && userRecord.password === pass) {
-                // التحقق من التاريخ
-                let today = new Date();
-                let expire = new Date(userRecord.expireDate);
-
-                if (today > expire) {
-                    alert("❌ انتهت صلاحية اشتراكك الشهري! برجاء التواصل مع الإدارة للتجديد.");
-                } else {
-                    // صلاحية صحيحة، احفظ الجلسة ووجهه لصفحة الحسابات
-                    sessionStorage.setItem("user_authenticated", "true");
-                    window.location.href = "/protected/NSC";
-                }
-            } else {
-                alert("❌ اسم المستخدم أو الرقم السري غير صحيح!");
+            if (today > expire) {
+                message.style.color = "#dc2626";
+                message.textContent =
+                    "Your subscription has expired. Please contact the administrator.";
+                return;
             }
+
+            // Valid credentials + valid subscription:
+            // create the session used by NSC.html.
+            sessionStorage.setItem(
+                "user_authenticated",
+                "true"
+            );
+
+            sessionStorage.setItem(
+                "authenticated_username",
+                user
+            );
+
+            window.location.href = "/protected/NSC.html";
+
+        } else {
+
+            message.style.color = "#dc2626";
+            message.textContent =
+                "Invalid username or password.";
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
