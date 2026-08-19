@@ -1,9 +1,7 @@
 (function () {
 
     /* =========================================================
-       DEVICE ID
-       Each browser/device receives its own local identifier.
-       Maximum allowed devices = 2.
+       GET DEVICE ID
        ========================================================= */
 
     function getDeviceId() {
@@ -12,27 +10,7 @@
             localStorage.getItem("nsc_device_id");
 
         if (!deviceId) {
-
-            if (
-                window.crypto &&
-                crypto.randomUUID
-            ) {
-                deviceId = crypto.randomUUID();
-            } else {
-
-                deviceId =
-                    "NSC-" +
-                    Date.now() +
-                    "-" +
-                    Math.random()
-                        .toString(36)
-                        .substring(2);
-            }
-
-            localStorage.setItem(
-                "nsc_device_id",
-                deviceId
-            );
+            return null;
         }
 
         return deviceId;
@@ -54,11 +32,161 @@
         );
 
         window.location.replace("/");
+
     }
 
 
     /* =========================================================
-       CHECK SUBSCRIPTION + DEVICE
+       LOAD DEVICES
+       ========================================================= */
+
+    function loadDevices(storageKey) {
+
+        try {
+
+            const savedDevices =
+                localStorage.getItem(
+                    storageKey
+                );
+
+            if (!savedDevices) {
+                return [];
+            }
+
+            const parsed =
+                JSON.parse(savedDevices);
+
+
+            if (!Array.isArray(parsed)) {
+                return [];
+            }
+
+
+            /*
+             * Support old format:
+             *
+             * ["device1", "device2"]
+             */
+
+            return parsed
+                .map(function (item, index) {
+
+                    if (
+                        typeof item === "string"
+                    ) {
+
+                        return {
+
+                            id: item,
+
+                            registeredAt:
+                                index
+
+                        };
+
+                    }
+
+
+                    if (
+                        item &&
+                        item.id
+                    ) {
+
+                        return item;
+
+                    }
+
+
+                    return null;
+
+                })
+                .filter(Boolean);
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+    }
+
+
+    /* =========================================================
+       SAVE DEVICES
+       ========================================================= */
+
+    function saveDevices(
+        storageKey,
+        devices
+    ) {
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(devices)
+        );
+
+    }
+
+
+    /* =========================================================
+       ENFORCE DEVICE LIMIT
+       ========================================================= */
+
+    function enforceDeviceLimit(
+        devices,
+        maxDevices
+    ) {
+
+        if (
+            !Number.isFinite(maxDevices) ||
+            maxDevices < 1
+        ) {
+
+            maxDevices = 1;
+
+        }
+
+
+        /*
+         * Oldest devices first.
+         */
+
+        devices.sort(
+            function (a, b) {
+
+                return (
+                    Number(a.registeredAt || 0) -
+                    Number(b.registeredAt || 0)
+                );
+
+            }
+        );
+
+
+        /*
+         * Keep only the allowed number.
+         */
+
+        if (
+            devices.length > maxDevices
+        ) {
+
+            devices =
+                devices.slice(
+                    0,
+                    maxDevices
+                );
+
+        }
+
+
+        return devices;
+
+    }
+
+
+    /* =========================================================
+       CHECK SUBSCRIPTION
        ========================================================= */
 
     function checkSubscription() {
@@ -75,6 +203,7 @@
 
             logout();
             return;
+
         }
 
 
@@ -92,6 +221,7 @@
 
             logout();
             return;
+
         }
 
 
@@ -103,6 +233,7 @@
 
             logout();
             return;
+
         }
 
 
@@ -121,6 +252,7 @@
 
             logout();
             return;
+
         }
 
 
@@ -143,6 +275,7 @@
 
             logout();
             return;
+
         }
 
 
@@ -160,70 +293,100 @@
 
             logout();
             return;
+
         }
 
 
-        /* -----------------------------------------------------
+        /* =====================================================
            DEVICE BINDING
-           ----------------------------------------------------- */
+           ===================================================== */
 
         const currentDevice =
             getDeviceId();
 
 
-        /*
-         * Device IDs registered during login
-         * are stored locally for this account.
-         */
+        if (!currentDevice) {
+
+            logout();
+            return;
+
+        }
+
 
         const storageKey =
             "nsc_devices_" + email;
 
 
-        let devices = [];
+        let devices =
+            loadDevices(
+                storageKey
+            );
 
-        try {
 
-            const savedDevices =
-                localStorage.getItem(
-                    storageKey
-                );
+        /* -----------------------------------------------------
+           Maximum devices
+           Controlled by users.js
+           ----------------------------------------------------- */
 
-            if (savedDevices) {
+        let maxDevices =
+            Number(
+                user.maxDevices
+            );
 
-                devices =
-                    JSON.parse(
-                        savedDevices
-                    );
 
-            }
+        if (
+            !Number.isFinite(maxDevices) ||
+            maxDevices < 1
+        ) {
 
-        } catch (error) {
-
-            devices = [];
+            maxDevices = 1;
 
         }
 
 
         /* -----------------------------------------------------
-           Maximum devices
+           Apply current device limit
+           
+           Example:
+           
+           5 devices registered
+           maxDevices changed to 2
+           
+           → oldest 2 remain authorized
+           → other 3 are removed
            ----------------------------------------------------- */
 
-        const maxDevices =
-            Number(
-                user.maxDevices || 2
+        devices =
+            enforceDeviceLimit(
+                devices,
+                maxDevices
             );
 
 
+        saveDevices(
+            storageKey,
+            devices
+        );
+
+
         /* -----------------------------------------------------
-           Current device must be registered
+           Check current device
            ----------------------------------------------------- */
 
-        if (
-            !devices.includes(
-                currentDevice
-            )
-        ) {
+        const authorized =
+            devices.some(
+                function (device) {
+
+                    return (
+                        device.id ===
+                        currentDevice
+                    );
+
+                }
+            );
+
+
+        if (!authorized) {
 
             alert(
                 "This device is not authorized for this account."
@@ -231,30 +394,14 @@
 
             logout();
             return;
-        }
 
-
-        /* -----------------------------------------------------
-           Too many devices
-           ----------------------------------------------------- */
-
-        if (
-            devices.length > maxDevices
-        ) {
-
-            alert(
-                "The maximum number of authorized devices has been exceeded."
-            );
-
-            logout();
-            return;
         }
 
     }
 
 
     /* =========================================================
-       CHECK IMMEDIATELY
+       INITIAL CHECK
        ========================================================= */
 
     checkSubscription();
