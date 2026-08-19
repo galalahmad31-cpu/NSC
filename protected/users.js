@@ -1,8 +1,7 @@
 window.USERS_DATABASE = {
-    Ahmed: {
-        password: "123456",
+    admin: {
+        password: "admin",
         startDate: "2026-08-19",
-        durationDays: 30,
-        expireDate: "2026-08-17"
+        expireDate: "2026-08-31"
     }
 };
