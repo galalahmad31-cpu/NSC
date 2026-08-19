@@ -39,10 +39,6 @@
             box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16);
         }
 
-        /* =========================
-           HEADER
-           ========================= */
-
         .header {
             background: #1e3a8a;
             color: #ffffff;
@@ -69,8 +65,6 @@
             color: #bfdbfe;
             font-size: 17px;
         }
-
-        /* LinkedIn */
 
         .linkedin {
             width: 26px;
@@ -101,10 +95,6 @@
             font-style: italic;
         }
 
-        /* =========================
-           BODY
-           ========================= */
-
         .body {
             padding: 32px 30px 30px;
         }
@@ -125,10 +115,6 @@
             color: #64748b;
             font-size: 14px;
         }
-
-        /* =========================
-           INPUTS
-           ========================= */
 
         .field {
             margin-bottom: 17px;
@@ -160,10 +146,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
 
-        /* =========================
-           LOGIN BUTTON
-           ========================= */
-
         .login-btn {
             width: 100%;
             background: #2563eb;
@@ -187,10 +169,6 @@
             transform: translateY(0);
         }
 
-        /* =========================
-           MESSAGE
-           ========================= */
-
         .message {
             min-height: 22px;
             margin-top: 16px;
@@ -199,10 +177,6 @@
             font-weight: 600;
             line-height: 1.5;
         }
-
-        /* =========================
-           SUBSCRIPTION & ACTIVATION
-           ========================= */
 
         .activation-card {
             margin-top: 22px;
@@ -269,20 +243,12 @@
             padding-top: 12px;
         }
 
-        /* =========================
-           FOOTER
-           ========================= */
-
         .footer {
             text-align: center;
             padding: 0 30px 25px;
             color: #94a3b8;
             font-size: 12px;
         }
-
-        /* =========================
-           MOBILE
-           ========================= */
 
         @media (max-width: 520px) {
 
@@ -306,10 +272,6 @@
 <div class="login-wrapper">
 
     <div class="login-card">
-
-        <!-- =========================
-             HEADER
-             ========================= -->
 
         <div class="header">
 
@@ -348,11 +310,6 @@
 
         </div>
 
-
-        <!-- =========================
-             LOGIN BODY
-             ========================= -->
-
         <div class="body">
 
             <div class="welcome">
@@ -362,34 +319,28 @@
                 </h2>
 
                 <p>
-                    Enter your username and password to access the calculator.
+                    Enter your email and password to access the calculator.
                 </p>
 
             </div>
 
-
             <form id="login-form">
-
-                <!-- Username -->
 
                 <div class="field">
 
-                    <label for="username">
-                        Username
+                    <label for="email">
+                        Email
                     </label>
 
                     <input
-                        id="username"
-                        type="text"
+                        id="email"
+                        type="email"
                         autocomplete="username"
-                        placeholder="Enter username"
+                        placeholder="Enter your email"
                         required
                     >
 
                 </div>
-
-
-                <!-- Password -->
 
                 <div class="field">
 
@@ -407,9 +358,6 @@
 
                 </div>
 
-
-                <!-- Login -->
-
                 <button
                     class="login-btn"
                     type="submit"
@@ -419,19 +367,11 @@
 
             </form>
 
-
-            <!-- Message -->
-
             <div
                 id="message"
                 class="message"
                 aria-live="polite"
             ></div>
-
-
-            <!-- =========================
-                 SUBSCRIPTION & ACTIVATION
-                 ========================= -->
 
             <div class="activation-card">
 
@@ -492,9 +432,6 @@
 
         </div>
 
-
-        <!-- Footer -->
-
         <div class="footer">
             Authorized subscribers only
         </div>
@@ -508,6 +445,7 @@
 
 /* =========================================================
    LOGIN SYSTEM
+   Email + Password + Maximum 2 Devices
    ========================================================= */
 
 (function () {
@@ -526,18 +464,54 @@
     function showMessage(text, color) {
 
         message.textContent = text;
-
         message.style.color = color;
 
     }
 
 
     /* -----------------------------------------------------
+       Generate / Get Device ID
+       ----------------------------------------------------- */
+
+    function getDeviceId() {
+
+        let deviceId =
+            localStorage.getItem("nsc_device_id");
+
+        if (!deviceId) {
+
+            if (
+                window.crypto &&
+                crypto.randomUUID
+            ) {
+
+                deviceId =
+                    crypto.randomUUID();
+
+            } else {
+
+                deviceId =
+                    "NSC-" +
+                    Date.now() +
+                    "-" +
+                    Math.random()
+                        .toString(36)
+                        .substring(2);
+
+            }
+
+            localStorage.setItem(
+                "nsc_device_id",
+                deviceId
+            );
+        }
+
+        return deviceId;
+    }
+
+
+    /* -----------------------------------------------------
        Parse expiration date
-
-       users.js example:
-
-       expireDate: "2026-09-18"
        ----------------------------------------------------- */
 
     function parseExpireDate(dateString) {
@@ -546,16 +520,18 @@
             return null;
         }
 
-        /*
-         * Add the end-of-day time so that the customer
-         * can use the application throughout the
-         * expiration date.
-         */
-
         const date =
-            new Date(dateString + "T23:59:59");
+            new Date(
+                dateString +
+                "T23:59:59"
+            );
 
-        if (Number.isNaN(date.getTime())) {
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
             return null;
         }
 
@@ -567,152 +543,241 @@
        LOGIN
        ----------------------------------------------------- */
 
-    form.addEventListener("submit", function (event) {
+    form.addEventListener(
+        "submit",
+        function (event) {
 
-        event.preventDefault();
-
-
-        const username =
-            document
-                .getElementById("username")
-                .value
-                .trim();
+            event.preventDefault();
 
 
-        const password =
-            document
-                .getElementById("password")
-                .value;
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim()
+                    .toLowerCase();
 
 
-        /* -------------------------------------------------
-           Check users.js
-           ------------------------------------------------- */
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
 
-        if (!window.USERS_DATABASE) {
 
-            showMessage(
-                "Unable to load subscriber accounts.",
-                "#dc2626"
+            /* -------------------------------------------------
+               Check users.js
+               ------------------------------------------------- */
+
+            if (!window.USERS_DATABASE) {
+
+                showMessage(
+                    "Unable to load subscriber accounts.",
+                    "#dc2626"
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+               Find user by email
+               ------------------------------------------------- */
+
+            const userRecord =
+                window.USERS_DATABASE[email];
+
+
+            /* -------------------------------------------------
+               Email + Password
+               ------------------------------------------------- */
+
+            if (
+                !userRecord ||
+                userRecord.password !== password
+            ) {
+
+                showMessage(
+                    "Invalid email or password.",
+                    "#dc2626"
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+               Check expiration
+               ------------------------------------------------- */
+
+            const expireDate =
+                parseExpireDate(
+                    userRecord.expireDate
+                );
+
+
+            if (!expireDate) {
+
+                showMessage(
+                    "Subscription expiration date is invalid.",
+                    "#dc2626"
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+               Check current date
+               ------------------------------------------------- */
+
+            if (
+                new Date() > expireDate
+            ) {
+
+                showMessage(
+                    "Your subscription has expired. Please contact the administrator for renewal.",
+                    "#dc2626"
+                );
+
+                sessionStorage.removeItem(
+                    "user_authenticated"
+                );
+
+                sessionStorage.removeItem(
+                    "authenticated_email"
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------------------
+               DEVICE BINDING
+               ------------------------------------------------- */
+
+            const deviceId =
+                getDeviceId();
+
+
+            const storageKey =
+                "nsc_devices_" + email;
+
+
+            let devices = [];
+
+            try {
+
+                const savedDevices =
+                    localStorage.getItem(
+                        storageKey
+                    );
+
+                if (savedDevices) {
+
+                    devices =
+                        JSON.parse(
+                            savedDevices
+                        );
+
+                }
+
+            } catch (error) {
+
+                devices = [];
+
+            }
+
+
+            /* -------------------------------------------------
+               Maximum 2 Devices
+               ------------------------------------------------- */
+
+            const maxDevices =
+                Number(
+                    userRecord.maxDevices || 2
+                );
+
+
+            /* -------------------------------------------------
+               Current device already authorized
+               ------------------------------------------------- */
+
+            if (
+                devices.includes(
+                    deviceId
+                )
+            ) {
+
+                /* Device already registered */
+
+            } else {
+
+                /* -------------------------------------------------
+                   New device
+                   ------------------------------------------------- */
+
+                if (
+                    devices.length >=
+                    maxDevices
+                ) {
+
+                    showMessage(
+                        "This account has already been activated on the maximum number of devices.",
+                        "#dc2626"
+                    );
+
+                    return;
+                }
+
+
+                /* -------------------------------------------------
+                   Register new device
+                   ------------------------------------------------- */
+
+                devices.push(
+                    deviceId
+                );
+
+
+                localStorage.setItem(
+                    storageKey,
+                    JSON.stringify(
+                        devices
+                    )
+                );
+
+            }
+
+
+            /* -------------------------------------------------
+               LOGIN SUCCESS
+               ------------------------------------------------- */
+
+            sessionStorage.setItem(
+                "user_authenticated",
+                "true"
             );
 
-            return;
+
+            sessionStorage.setItem(
+                "authenticated_email",
+                email
+            );
+
+
+            /* -------------------------------------------------
+               Open protected calculator
+               ------------------------------------------------- */
+
+            window.location.href =
+                "/protected/NSC.html";
+
         }
-
-
-        /* -------------------------------------------------
-           Find user
-           ------------------------------------------------- */
-
-        const userRecord =
-            window.USERS_DATABASE[username];
-
-
-        /* -------------------------------------------------
-           Username + Password
-           ------------------------------------------------- */
-
-        if (
-            !userRecord ||
-            userRecord.password !== password
-        ) {
-
-            showMessage(
-                "Invalid username or password.",
-                "#dc2626"
-            );
-
-            return;
-        }
-
-
-        /* -------------------------------------------------
-           Check Expiration Date
-           ------------------------------------------------- */
-
-        const expireDate =
-            parseExpireDate(
-                userRecord.expireDate
-            );
-
-
-        if (!expireDate) {
-
-            showMessage(
-                "Subscription expiration date is invalid.",
-                "#dc2626"
-            );
-
-            return;
-        }
-
-
-        /* -------------------------------------------------
-           Current date/time
-           ------------------------------------------------- */
-
-        const now =
-            new Date();
-
-
-        /* -------------------------------------------------
-           Subscription expired
-           ------------------------------------------------- */
-
-        if (now > expireDate) {
-
-            showMessage(
-                "Your subscription has expired. Please contact the administrator for renewal.",
-                "#dc2626"
-            );
-
-
-            /*
-             * Make sure an old session cannot
-             * remain active.
-             */
-
-            sessionStorage.removeItem(
-                "user_authenticated"
-            );
-
-            sessionStorage.removeItem(
-                "authenticated_username"
-            );
-
-
-            return;
-        }
-
-
-        /* -------------------------------------------------
-           LOGIN SUCCESS
-           ------------------------------------------------- */
-
-        sessionStorage.setItem(
-            "user_authenticated",
-            "true"
-        );
-
-
-        sessionStorage.setItem(
-            "authenticated_username",
-            username
-        );
-
-
-        /*
-         * Open the protected calculator.
-         */
-
-        window.location.href =
-            "/protected/NSC.html";
-
-    });
+    );
 
 })();
 
 </script>
 
 </body>
-                    </html>
+        </html>
