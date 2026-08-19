@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موقع حسابات التغذية الذكي</title>
-    
-    <!-- استدعاء مكتبة الحماية والأعضاء من Netlify -->
-    </script>
-
     <style>
-        /* تنسيقات بسيطة واحترافية للصفحة */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
@@ -40,17 +35,8 @@
             line-height: 1.6;
             color: #666;
         }
-        .payment-box {
-            background-color: #ffe5ec;
-            border: 1px solid #ffb3c6;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-weight: bold;
-            color: #c9184a;
-        }
-        /* تنسيق زر تسجيل الدخول الخاص بـ Netlify */
-        [data-netlify-identity-button] {
+        /* تنسيق زر الدخول للحسابات */
+        .enter-btn {
             display: inline-block;
             background-color: #2ec4b6;
             color: white;
@@ -63,8 +49,9 @@
             border: none;
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
-        [data-netlify-identity-button]:hover {
+        .enter-btn:hover {
             background-color: #011627;
         }
     </style>
@@ -73,39 +60,11 @@
 
     <div class="container">
         <h1>موقع حسابات التغذية 🍎</h1>
-        <p>مرحباً بك! هذا الموقع مخصص لحساب السعرات الحرارية والماكروز وتصميم الأنظمة الغذائية بدقة عالية وبأحدث المعادلات العلمية.</p>
+        <p>مرحباً بك في لوحة التحكم الخاصة بك. يمكنك الآن البدء في استخدام أدواتنا المتقدمة لحساب السعرات والماكروز وتصميم الأنظمة الغذائية بدقة علمية.</p>
         
-        <!-- قسم تعليمات الدفع اليدوي للمستخدم المصري -->
-        <div class="payment-box">
-            📢 للاشتراك وتفعيل الحساب:<br>
-            قم بتحويل قيمة الاشتراك عبر فودافون كاش أو InstaPay إلى الرقم:<br>
-            <span style="font-size: 20px; letter-spacing: 1px;">[اكتب رقمك هنا]</span><br>
-            ثم أرسل لقطة شاشة (Screenshot) للتحويل لتفعيل حسابك فوراً.
-        </div>
-
-        <p>إذا كنت مشتركاً بالفعل أو تريد إنشاء حساب جديد للمراجعة، اضغط أدناه:</p>
-        
-        <!-- الزر السحري الذي يفتح نافذة التسجيل والدخول تلقائياً -->
-        تسجيل الدخول / إنشاء حساب مجاني</div>
+        <!-- الزر يوجه العميل مباشرة للمجلد المحمي والملف المكتوب في الـ vercel.json بدون .html -->
+        <a href="/protected/NSC" class="enter-btn">الدخول إلى حاسبة التغذية NSC</a>
     </div>
 
-    <!-- كود الجافا سكريبت للتحكم في التوجيه والحماية -->
-    <script>
-        // التأكد من عمل مكتبة Netlify Identity
-        if (window.netlifyIdentity) {
-            
-            // عند فتح الصفحة: التحقق لو المستخدم مسجل دخول بالفعل وعنده صلاحية، ينقله مباشرة
-            window.netlifyIdentity.on("init", user => {
-                if (user && user.app_metadata && user.app_metadata.roles && user.app_metadata.roles.includes("premium")) {
-                    window.location.href = "/protected/NSC.html";
-                }
-            });
-
-            // عند قيام المستخدم بتسجيل الدخول بنجاح، يتم توجيهه لملف الحسابات السري NSC
-            window.netlifyIdentity.on("login", user => {
-                window.location.href = "/protected/NSC.html";
-            });
-        }
-    </script>
 </body>
 </html>
