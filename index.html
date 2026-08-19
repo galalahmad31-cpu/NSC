@@ -440,12 +440,12 @@
 
 </div>
 
-
 <script>
 
 /* =========================================================
    LOGIN SYSTEM
-   Email + Password + Maximum 2 Devices
+   Email + Password + Expiry Date + Device Binding
+   Maximum devices are controlled from users.js
    ========================================================= */
 
 (function () {
@@ -536,6 +536,169 @@
         }
 
         return date;
+    }
+
+
+    /* -----------------------------------------------------
+       Load registered devices
+       ----------------------------------------------------- */
+
+    function loadDevices(storageKey) {
+
+        try {
+
+            const savedDevices =
+                localStorage.getItem(
+                    storageKey
+                );
+
+            if (!savedDevices) {
+                return [];
+            }
+
+            const parsed =
+                JSON.parse(savedDevices);
+
+            /*
+             * New format:
+             *
+             * [
+             *   {
+             *      id: "...",
+             *      registeredAt: 123456789
+             *   }
+             * ]
+             */
+
+            if (Array.isArray(parsed)) {
+
+                /*
+                 * Convert old device format:
+                 *
+                 * ["device1", "device2"]
+                 *
+                 * into the new format.
+                 */
+
+                return parsed
+                    .map(function (item, index) {
+
+                        if (
+                            typeof item === "string"
+                        ) {
+
+                            return {
+                                id: item,
+                                registeredAt:
+                                    index
+                            };
+
+                        }
+
+                        if (
+                            item &&
+                            item.id
+                        ) {
+
+                            return item;
+
+                        }
+
+                        return null;
+
+                    })
+                    .filter(Boolean);
+
+            }
+
+        } catch (error) {
+
+            return [];
+
+        }
+
+        return [];
+    }
+
+
+    /* -----------------------------------------------------
+       Save registered devices
+       ----------------------------------------------------- */
+
+    function saveDevices(
+        storageKey,
+        devices
+    ) {
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(devices)
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       Apply maximum-device limit
+       
+       If the administrator decreases the limit,
+       the oldest devices are retained.
+       ----------------------------------------------------- */
+
+    function enforceDeviceLimit(
+        devices,
+        maxDevices
+    ) {
+
+        /*
+         * Make sure the number is valid.
+         */
+
+        if (
+            !Number.isFinite(maxDevices) ||
+            maxDevices < 1
+        ) {
+
+            maxDevices = 1;
+
+        }
+
+
+        /*
+         * Sort from oldest to newest.
+         */
+
+        devices.sort(
+            function (a, b) {
+
+                return (
+                    Number(a.registeredAt || 0) -
+                    Number(b.registeredAt || 0)
+                );
+
+            }
+        );
+
+
+        /*
+         * Keep only the allowed number
+         * of oldest devices.
+         */
+
+        if (
+            devices.length > maxDevices
+        ) {
+
+            devices =
+                devices.slice(
+                    0,
+                    maxDevices
+                );
+
+        }
+
+
+        return devices;
     }
 
 
@@ -663,58 +826,99 @@
                 "nsc_devices_" + email;
 
 
-            let devices = [];
+            /* -------------------------------------------------
+               Maximum devices
+               Controlled by users.js
+               ------------------------------------------------- */
 
-            try {
+            let maxDevices =
+                Number(
+                    userRecord.maxDevices
+                );
 
-                const savedDevices =
-                    localStorage.getItem(
-                        storageKey
-                    );
 
-                if (savedDevices) {
+            if (
+                !Number.isFinite(maxDevices) ||
+                maxDevices < 1
+            ) {
 
-                    devices =
-                        JSON.parse(
-                            savedDevices
-                        );
-
-                }
-
-            } catch (error) {
-
-                devices = [];
+                maxDevices = 1;
 
             }
 
 
             /* -------------------------------------------------
-               Maximum 2 Devices
+               Load devices
                ------------------------------------------------- */
 
-            const maxDevices =
-                Number(
-                    userRecord.maxDevices || 2
+            let devices =
+                loadDevices(
+                    storageKey
                 );
 
 
             /* -------------------------------------------------
-               Current device already authorized
+               Apply the CURRENT limit
+               
+               This is important:
+               If you change 5 → 2,
+               only the 2 oldest devices remain.
+               ------------------------------------------------- */
+
+            devices =
+                enforceDeviceLimit(
+                    devices,
+                    maxDevices
+                );
+
+
+            /* -------------------------------------------------
+               Check whether current device
+               is already authorized
+               ------------------------------------------------- */
+
+            const currentDeviceIndex =
+                devices.findIndex(
+                    function (device) {
+
+                        return (
+                            device.id ===
+                            deviceId
+                        );
+
+                    }
+                );
+
+
+            /* -------------------------------------------------
+               Current device already registered
                ------------------------------------------------- */
 
             if (
-                devices.includes(
-                    deviceId
-                )
+                currentDeviceIndex !== -1
             ) {
 
-                /* Device already registered */
+                /*
+                 * Device is already authorized.
+                 */
 
-            } else {
+                saveDevices(
+                    storageKey,
+                    devices
+                );
 
-                /* -------------------------------------------------
-                   New device
-                   ------------------------------------------------- */
+            }
+
+
+            /* -------------------------------------------------
+               New device
+               ------------------------------------------------- */
+
+            else {
+
+                /*
+                 * The current device is not registered.
+                 */
 
                 if (
                     devices.length >=
@@ -722,7 +926,7 @@
                 ) {
 
                     showMessage(
-                        "This account has already been activated on the maximum number of devices.",
+                        "This account has already reached its maximum number of authorized devices.",
                         "#dc2626"
                     );
 
@@ -734,16 +938,20 @@
                    Register new device
                    ------------------------------------------------- */
 
-                devices.push(
-                    deviceId
-                );
+                devices.push({
+
+                    id:
+                        deviceId,
+
+                    registeredAt:
+                        Date.now()
+
+                });
 
 
-                localStorage.setItem(
+                saveDevices(
                     storageKey,
-                    JSON.stringify(
-                        devices
-                    )
+                    devices
                 );
 
             }
