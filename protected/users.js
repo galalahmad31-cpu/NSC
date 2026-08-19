@@ -3,6 +3,6 @@ window.USERS_DATABASE = {
         password: "123456",
         startDate: "2026-08-19",
         durationDays: 30,
-        expireDate: "2026-09-18"
+        expireDate: "2026-08-17"
     }
 };
