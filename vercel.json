@@ -1,3 +1,10 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/protected/users.js",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
 }
