@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Nutrition Support Calculator</title>
 
+    <!-- Subscriber Accounts -->
     <script src="/protected/users.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -22,19 +26,26 @@
             color: #1e293b;
         }
 
-        .login-wrapper { width: 100%; max-width: 560px; }
+        .login-wrapper {
+            width: 100%;
+            max-width: 560px;
+        }
 
         .login-card {
-            background: #fff;
+            background: #ffffff;
             border-radius: 20px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 20px 50px rgba(15,23,42,.16);
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16);
         }
+
+        /* =========================
+           HEADER
+           ========================= */
 
         .header {
             background: #1e3a8a;
-            color: #fff;
+            color: #ffffff;
             padding: 34px 25px 30px;
             text-align: center;
         }
@@ -43,7 +54,7 @@
             margin: 0;
             font-size: 30px;
             font-weight: 700;
-            letter-spacing: -.5px;
+            letter-spacing: -0.5px;
         }
 
         .developer-row {
@@ -54,7 +65,12 @@
             gap: 9px;
         }
 
-        .developer { color: #bfdbfe; font-size: 17px; }
+        .developer {
+            color: #bfdbfe;
+            font-size: 17px;
+        }
+
+        /* LinkedIn */
 
         .linkedin {
             width: 26px;
@@ -62,13 +78,21 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #ffffff;
             text-decoration: none;
+            transition: 0.2s;
         }
 
-        .linkedin:hover { color: #93c5fd; }
+        .linkedin:hover {
+            color: #93c5fd;
+            transform: translateY(-1px);
+        }
 
-        .linkedin svg { width: 21px; height: 21px; fill: currentColor; }
+        .linkedin svg {
+            width: 21px;
+            height: 21px;
+            fill: currentColor;
+        }
 
         .role {
             margin-top: 5px;
@@ -77,9 +101,18 @@
             font-style: italic;
         }
 
-        .body { padding: 32px 30px 30px; }
+        /* =========================
+           BODY
+           ========================= */
 
-        .welcome { text-align: center; margin-bottom: 24px; }
+        .body {
+            padding: 32px 30px 30px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
         .welcome h2 {
             margin: 0 0 7px;
@@ -93,7 +126,13 @@
             font-size: 14px;
         }
 
-        .field { margin-bottom: 17px; }
+        /* =========================
+           INPUTS
+           ========================= */
+
+        .field {
+            margin-bottom: 17px;
+        }
 
         .field label {
             display: block;
@@ -108,22 +147,27 @@
             padding: 13px 14px;
             border: 1px solid #cbd5e1;
             border-radius: 9px;
-            background: #fff;
+            background: #ffffff;
             font-size: 16px;
             direction: ltr;
             text-align: left;
             outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input:focus {
             border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
+
+        /* =========================
+           LOGIN BUTTON
+           ========================= */
 
         .login-btn {
             width: 100%;
             background: #2563eb;
-            color: #fff;
+            color: #ffffff;
             padding: 13px;
             border: none;
             border-radius: 9px;
@@ -131,9 +175,21 @@
             font-weight: 700;
             cursor: pointer;
             margin-top: 7px;
+            transition: 0.2s;
         }
 
-        .login-btn:hover { background: #1e3a8a; }
+        .login-btn:hover {
+            background: #1e3a8a;
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* =========================
+           MESSAGE
+           ========================= */
 
         .message {
             min-height: 22px;
@@ -141,7 +197,12 @@
             text-align: center;
             font-size: 14px;
             font-weight: 600;
+            line-height: 1.5;
         }
+
+        /* =========================
+           FOOTER
+           ========================= */
 
         .footer {
             text-align: center;
@@ -150,23 +211,49 @@
             font-size: 12px;
         }
 
+        /* =========================
+           MOBILE
+           ========================= */
+
         @media (max-width: 520px) {
-            .title { font-size: 24px; }
-            .header { padding: 28px 18px 24px; }
-            .body { padding: 26px 20px 24px; }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .header {
+                padding: 28px 18px 24px;
+            }
+
+            .body {
+                padding: 26px 20px 24px;
+            }
         }
     </style>
 </head>
 
 <body>
+
 <div class="login-wrapper">
+
     <div class="login-card">
 
+        <!-- =========================
+             HEADER
+             ========================= -->
+
         <div class="header">
-            <h1 class="title">Nutrition Support Calculator</h1>
+
+            <h1 class="title">
+                Nutrition Support Calculator
+            </h1>
 
             <div class="developer-row">
-                <span class="developer">Developed by Dr. Ahmed Galal</span>
+
+                <span class="developer">
+                    Developed by Dr. Ahmed Galal
+                </span>
+
                 <a
                     href="https://www.linkedin.com/in/ahmad-galal-a1200714b"
                     target="_blank"
@@ -174,100 +261,327 @@
                     class="linkedin"
                     aria-label="LinkedIn"
                 >
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                     </svg>
+
                 </a>
+
             </div>
 
-            <div class="role">Nutrition Support Pharmacist</div>
+            <div class="role">
+                Nutrition Support Pharmacist
+            </div>
+
         </div>
+
+
+        <!-- =========================
+             LOGIN BODY
+             ========================= -->
 
         <div class="body">
+
             <div class="welcome">
-                <h2>Subscriber Login</h2>
-                <p>Enter your username and password to access the calculator.</p>
+
+                <h2>
+                    Subscriber Login
+                </h2>
+
+                <p>
+                    Enter your username and password to access the calculator.
+                </p>
+
             </div>
 
+
             <form id="login-form">
-                <div class="field">
-                    <label for="username">Username</label>
-                    <input id="username" type="text" autocomplete="username" placeholder="Enter username" required>
-                </div>
+
+                <!-- Username -->
 
                 <div class="field">
-                    <label for="password">Password</label>
-                    <input id="password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        id="username"
+                        type="text"
+                        autocomplete="username"
+                        placeholder="Enter username"
+                        required
+                    >
+
                 </div>
 
-                <button class="login-btn" type="submit">LOGIN</button>
+
+                <!-- Password -->
+
+                <div class="field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        id="password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Enter password"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Login -->
+
+                <button
+                    class="login-btn"
+                    type="submit"
+                >
+                    LOGIN
+                </button>
+
             </form>
 
-            <div id="message" class="message" aria-live="polite"></div>
+
+            <!-- Message -->
+
+            <div
+                id="message"
+                class="message"
+                aria-live="polite"
+            ></div>
+
         </div>
 
-        <div class="footer">Authorized subscribers only</div>
+
+        <!-- Footer -->
+
+        <div class="footer">
+            Authorized subscribers only
+        </div>
+
     </div>
+
 </div>
 
+
 <script>
+
+/* =========================================================
+   LOGIN SYSTEM
+   ========================================================= */
+
 (function () {
-    const form = document.getElementById("login-form");
-    const message = document.getElementById("message");
+
+    const form =
+        document.getElementById("login-form");
+
+    const message =
+        document.getElementById("message");
+
+
+    /* -----------------------------------------------------
+       Display message
+       ----------------------------------------------------- */
 
     function showMessage(text, color) {
+
         message.textContent = text;
+
         message.style.color = color;
+
     }
 
-    function parseDate(dateString) {
-        const d = new Date(dateString + "T23:59:59");
-        return Number.isNaN(d.getTime()) ? null : d;
+
+    /* -----------------------------------------------------
+       Parse expiration date
+       
+       users.js example:
+
+       expireDate: "2026-09-18"
+       ----------------------------------------------------- */
+
+    function parseExpireDate(dateString) {
+
+        if (!dateString) {
+            return null;
+        }
+
+        /*
+         * Add the end-of-day time so that the customer
+         * can use the application throughout the
+         * expiration date.
+         */
+
+        const date =
+            new Date(dateString + "T23:59:59");
+
+        if (Number.isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date;
     }
+
+
+    /* -----------------------------------------------------
+       LOGIN
+       ----------------------------------------------------- */
 
     form.addEventListener("submit", function (event) {
+
         event.preventDefault();
 
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+
+        const username =
+            document
+                .getElementById("username")
+                .value
+                .trim();
+
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+
+        /* -------------------------------------------------
+           Check users.js
+           ------------------------------------------------- */
 
         if (!window.USERS_DATABASE) {
-            showMessage("Unable to load subscriber accounts.", "#dc2626");
+
+            showMessage(
+                "Unable to load subscriber accounts.",
+                "#dc2626"
+            );
+
             return;
         }
 
-        const record = window.USERS_DATABASE[username];
 
-        if (!record || record.password !== password) {
-            showMessage("Invalid username or password.", "#dc2626");
+        /* -------------------------------------------------
+           Find user
+           ------------------------------------------------- */
+
+        const userRecord =
+            window.USERS_DATABASE[username];
+
+
+        /* -------------------------------------------------
+           Username + Password
+           ------------------------------------------------- */
+
+        if (
+            !userRecord ||
+            userRecord.password !== password
+        ) {
+
+            showMessage(
+                "Invalid username or password.",
+                "#dc2626"
+            );
+
             return;
         }
 
-        const expiry = parseDate(record.expireDate);
 
-        if (!expiry) {
-            showMessage("Subscription information is invalid.", "#dc2626");
+        /* -------------------------------------------------
+           Check Expiration Date
+           ------------------------------------------------- */
+
+        const expireDate =
+            parseExpireDate(
+                userRecord.expireDate
+            );
+
+
+        if (!expireDate) {
+
+            showMessage(
+                "Subscription expiration date is invalid.",
+                "#dc2626"
+            );
+
             return;
         }
 
-        const now = new Date();
 
-        if (now > expiry) {
+        /* -------------------------------------------------
+           Current date/time
+           ------------------------------------------------- */
+
+        const now =
+            new Date();
+
+
+        /* -------------------------------------------------
+           Subscription expired
+           ------------------------------------------------- */
+
+        if (now > expireDate) {
+
             showMessage(
                 "Your subscription has expired. Please contact the administrator for renewal.",
                 "#dc2626"
             );
-            sessionStorage.removeItem("user_authenticated");
-            sessionStorage.removeItem("authenticated_username");
+
+
+            /*
+             * Make sure an old session cannot
+             * remain active.
+             */
+
+            sessionStorage.removeItem(
+                "user_authenticated"
+            );
+
+            sessionStorage.removeItem(
+                "authenticated_username"
+            );
+
+
             return;
         }
 
-        sessionStorage.setItem("user_authenticated", "true");
-        sessionStorage.setItem("authenticated_username", username);
 
-        window.location.href = "/protected/NSC.html";
+        /* -------------------------------------------------
+           LOGIN SUCCESS
+           ------------------------------------------------- */
+
+        sessionStorage.setItem(
+            "user_authenticated",
+            "true"
+        );
+
+
+        sessionStorage.setItem(
+            "authenticated_username",
+            username
+        );
+
+
+        /*
+         * Open the protected calculator.
+         */
+
+        window.location.href =
+            "/protected/NSC.html";
+
     });
+
 })();
+
 </script>
+
 </body>
-</html>
+                    </html>
