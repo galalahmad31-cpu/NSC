@@ -3,68 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع حسابات التغذية الذكي</title>
+    <title>بوابة تسجيل دخول المشتركين</title>
+    
+    <!-- استدعاء ملف الأسماء المحمي من السيرفر -->
+    <script src="/protected/users.js"></script>
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            margin: 0; padding: 0;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
+        .login-card {
+            background: white; padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
+            max-width: 400px; width: 90%;
         }
-        h1 {
-            color: #2ec4b6;
-            margin-bottom: 10px;
+        h1 { color: #2ec4b6; margin-bottom: 20px; font-size: 24px; }
+        input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
+            font-size: 16px; text-align: center;
         }
-        p {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #666;
+        .login-btn {
+            width: 100%; background-color: #2ec4b6; color: white;
+            padding: 12px; border: none; border-radius: 8px;
+            font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px;
         }
-        /* تنسيق زر الدخول للحسابات */
-        .enter-btn {
-            display: inline-block;
-            background-color: #2ec4b6;
-            color: white;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 25px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.3s;
-            border: none;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-top: 20px;
-        }
-        .enter-btn:hover {
-            background-color: #011627;
-        }
+        .login-btn:hover { background-color: #011627; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="login-card">
         <h1>موقع حسابات التغذية 🍎</h1>
-        <p>مرحباً بك في لوحة التحكم الخاصة بك. يمكنك الآن البدء في استخدام أدواتنا المتقدمة لحساب السعرات والماكروز وتصميم الأنظمة الغذائية بدقة علمية.</p>
+        <p style="color: #666; font-size: 14px;">برجاء إدخال بيانات اشتراكك للدخول إلى الحاسبة</p>
         
-        <!-- الزر يوجه العميل مباشرة للمجلد المحمي والملف المكتوب في الـ vercel.json بدون .html -->
-        <a href="/protected/NSC" class="enter-btn">الدخول إلى حاسبة التغذية NSC</a>
+        <input type="text" id="username" placeholder="اسم المستخدم (Username)">
+        <input type="password" id="password" placeholder="الرقم السري (Password)">
+        
+        <button class="login-btn" onclick="validateLogin()">تسجيل الدخول</button>
     </div>
 
+    <script>
+        function validateLogin() {
+            let user = document.getElementById("username").value.trim();
+            let pass = document.getElementById("password").value.trim();
+
+            if (!window.USERS_DATABASE) {
+                alert("خطأ في الاتصال بالسيرفر!");
+                return;
+            }
+
+            let userRecord = window.USERS_DATABASE[user];
+
+            if (userRecord && userRecord.password === pass) {
+                // التحقق من التاريخ
+                let today = new Date();
+                let expire = new Date(userRecord.expireDate);
+
+                if (today > expire) {
+                    alert("❌ انتهت صلاحية اشتراكك الشهري! برجاء التواصل مع الإدارة للتجديد.");
+                } else {
+                    // صلاحية صحيحة، احفظ الجلسة ووجهه لصفحة الحسابات
+                    sessionStorage.setItem("user_authenticated", "true");
+                    window.location.href = "/protected/NSC";
+                }
+            } else {
+                alert("❌ اسم المستخدم أو الرقم السري غير صحيح!");
+            }
+        }
+    </script>
 </body>
 </html>
