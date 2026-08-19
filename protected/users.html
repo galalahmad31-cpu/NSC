@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management - Nutrition Support Calculator</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(15,23,42,.10);
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+
+        .header {
+            background: #1e3a8a;
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        .header p {
+            margin: 7px 0 0;
+            color: #bfdbfe;
+        }
+
+        .body { padding: 25px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 17px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 15px;
+            direction: ltr;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+        }
+
+        .full { grid-column: 1 / -1; }
+
+        .expiry-box {
+            margin-top: 18px;
+            padding: 15px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .expiry-label {
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .expiry-value {
+            color: #1e3a8a;
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary { background: #2563eb; color: #fff; }
+        .primary:hover { background: #1e3a8a; }
+
+        .secondary { background: #e2e8f0; color: #334155; }
+        .danger { background: #fee2e2; color: #b91c1c; }
+
+        .message {
+            margin-top: 15px;
+            min-height: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .status {
+            font-weight: 800;
+        }
+
+        .active { color: #15803d; }
+        .expired { color: #dc2626; }
+
+        .small-note {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        code {
+            background: #f1f5f9;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .grid { grid-template-columns: 1fr; }
+            .full { grid-column: auto; }
+            .body { padding: 18px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="card">
+        <div class="header">
+            <h1>Nutrition Support Calculator</h1>
+            <p>Subscriber Management</p>
+        </div>
+
+        <div class="body">
+            <div class="grid">
+
+                <div>
+                    <label for="username">Username</label>
+                    <input id="username" type="text" placeholder="e.g. ahmed01">
+                </div>
+
+                <div>
+                    <label for="password">Password</label>
+                    <input id="password" type="text" placeholder="Enter password">
+                </div>
+
+                <div>
+                    <label for="startDate">Start Date</label>
+                    <input id="startDate" type="date">
+                </div>
+
+                <div>
+                    <label for="duration">Subscription Duration (days)</label>
+                    <input id="duration" type="number" min="1" step="1" placeholder="e.g. 30">
+                </div>
+
+            </div>
+
+            <div class="expiry-box">
+                <div class="expiry-label">Calculated Expiry Date</div>
+                <div id="expiryDate" class="expiry-value">—</div>
+            </div>
+
+            <div class="actions">
+                <button class="primary" id="saveBtn">SAVE / UPDATE USER</button>
+                <button class="secondary" id="clearBtn">CLEAR</button>
+                <button class="primary" id="downloadBtn">DOWNLOAD users.js</button>
+                <button class="secondary" id="loadBtn">LOAD users.js</button>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <div class="small-note">
+                The calculator automatically calculates <b>Expiry Date = Start Date + Duration</b>.
+                The generated <code>users.js</code> is the file used by <code>index.html</code>.
+                After downloading it, upload/replace it at <code>/protected/users.js</code>.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="body">
+            <h2 style="margin-top:0;color:#1e3a8a;">Subscribers</h2>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Start Date</th>
+                        <th>Duration</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="usersTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    const STORAGE_KEY = "nsc_users_admin_draft";
+
+    let users = {};
+
+    const $ = id => document.getElementById(id);
+
+    function setMessage(text, color = "#15803d") {
+        $("message").textContent = text;
+        $("message").style.color = color;
+    }
+
+    function calculateExpiry() {
+        const startValue = $("startDate").value;
+        const duration = parseInt($("duration").value, 10);
+
+        if (!startValue || !Number.isFinite(duration) || duration < 1) {
+            $("expiryDate").textContent = "—";
+            return "";
+        }
+
+        // Date-only calculation avoids timezone shifting.
+        const parts = startValue.split("-").map(Number);
+        const date = new Date(parts[0], parts[1] - 1, parts[2]);
+        date.setDate(date.getDate() + duration - 1);
+
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+
+        const expiry = `${y}-${m}-${d}`;
+        $("expiryDate").textContent = expiry;
+
+        return expiry;
+    }
+
+    function saveDraft() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    }
+
+    function loadDraft() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) users = JSON.parse(saved) || {};
+        } catch (e) {
+            users = {};
+        }
+        renderTable();
+    }
+
+    function saveUser() {
+        const username = $("username").value.trim();
+        const password = $("password").value;
+        const startDate = $("startDate").value;
+        const duration = parseInt($("duration").value, 10);
+        const expireDate = calculateExpiry();
+
+        if (!username || !password || !startDate || !Number.isFinite(duration) || duration < 1 || !expireDate) {
+            setMessage("Please complete Username, Password, Start Date and Duration.", "#dc2626");
+            return;
+        }
+
+        users[username] = {
+            password: password,
+            startDate: startDate,
+            durationDays: duration,
+            expireDate: expireDate
+        };
+
+        saveDraft();
+        renderTable();
+        setMessage("User saved successfully.");
+    }
+
+    function editUser(username) {
+        const u = users[username];
+        if (!u) return;
+
+        $("username").value = username;
+        $("password").value = u.password || "";
+        $("startDate").value = u.startDate || "";
+        $("duration").value = u.durationDays || "";
+        calculateExpiry();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteUser(username) {
+        if (!confirm(`Delete user "${username}"?`)) return;
+
+        delete users[username];
+        saveDraft();
+        renderTable();
+        setMessage("User deleted.", "#dc2626");
+    }
+
+    function renderTable() {
+        const tbody = $("usersTable");
+        tbody.innerHTML = "";
+
+        const names = Object.keys(users);
+
+        if (!names.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align:center;color:#94a3b8;">
+                        No subscribers added yet.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        names.forEach(username => {
+            const u = users[username];
+            const expiry = new Date((u.expireDate || "") + "T23:59:59");
+            const expired = !Number.isNaN(expiry.getTime()) && new Date() > expiry;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${escapeHtml(username)}</td>
+                <td>${escapeHtml(u.startDate || "—")}</td>
+                <td>${escapeHtml(String(u.durationDays || "—"))} days</td>
+                <td>${escapeHtml(u.expireDate || "—")}</td>
+                <td class="status ${expired ? "expired" : "active"}">
+                    ${expired ? "Expired" : "Active"}
+                </td>
+                <td>
+                    <button class="secondary" data-edit="${escapeHtml(username)}">Edit</button>
+                    <button class="danger" data-delete="${escapeHtml(username)}">Delete</button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function clearForm() {
+        $("username").value = "";
+        $("password").value = "";
+        $("startDate").value = "";
+        $("duration").value = "";
+        $("expiryDate").textContent = "—";
+        setMessage("");
+    }
+
+    function downloadUsersJs() {
+        const js = `/* Nutrition Support Calculator - Subscriber Accounts */
+window.USERS_DATABASE = ${JSON.stringify(users, null, 4)};
+`;
+
+        const blob = new Blob([js], { type: "application/javascript" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = "users.js";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+
+        setMessage("users.js downloaded. Upload it to /protected/users.js.");
+    }
+
+    async function loadUsersJs() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".js,text/javascript,application/javascript";
+
+        input.onchange = async function () {
+            const file = input.files[0];
+            if (!file) return;
+
+            const text = await file.text();
+
+            const match = text.match(
+                /window\\.USERS_DATABASE\\s*=\\s*(\\{[\\s\\S]*?\\})\\s*;?/
+            );
+
+            if (!match) {
+                setMessage("Invalid users.js format.", "#dc2626");
+                return;
+            }
+
+            try {
+                // This file is created by this page itself.
+                const parsed = Function(`"use strict"; return (${match[1]});`)();
+                if (!parsed || typeof parsed !== "object") throw new Error();
+
+                users = parsed;
+                saveDraft();
+                renderTable();
+                setMessage("users.js loaded successfully.");
+            } catch (e) {
+                setMessage("Could not read users.js.", "#dc2626");
+            }
+        };
+
+        input.click();
+    }
+
+    $("startDate").addEventListener("change", calculateExpiry);
+    $("duration").addEventListener("input", calculateExpiry);
+    $("saveBtn").addEventListener("click", saveUser);
+    $("clearBtn").addEventListener("click", clearForm);
+    $("downloadBtn").addEventListener("click", downloadUsersJs);
+    $("loadBtn").addEventListener("click", loadUsersJs);
+
+    $("usersTable").addEventListener("click", function (event) {
+        const edit = event.target.dataset.edit;
+        const del = event.target.dataset.delete;
+
+        if (edit) editUser(edit);
+        if (del) deleteUser(del);
+    });
+
+    loadDraft();
+})();
+</script>
+</body>
+</html>
