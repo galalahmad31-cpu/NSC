@@ -1,7 +1,7 @@
 window.USERS_DATABASE = {
 
     "admin@example.com": {
-        password: "admin@2468",
+        password: "admin@246",
         startDate: "2026-08-19",
         expireDate: "2026-09-31",
         maxDevices: 2
